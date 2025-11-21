@@ -20,9 +20,9 @@ class CrawlPlugin(MCPPlugin):
     def __init__(self):
         try:
             self.crawler = WebCrawler()
-            print("   🕷️ CrawlPlugin: Crawler initialized")
+            import sys; print("   🕷️ CrawlPlugin: Crawler initialized", file=sys.stderr)
         except Exception as e:
-            print(f"   ⚠️ CrawlPlugin: Crawler init error: {e}")
+            import sys; print(f"   ⚠️ CrawlPlugin: Crawler init error: {e}", file=sys.stderr)
             self.crawler = None
 
     @property
@@ -101,12 +101,12 @@ class CrawlPlugin(MCPPlugin):
         chunk_num = 1
         max_chunks = 100
 
-        print(f"\n   {'✂️'*25}")
-        print(f"   ✂️ AUTO-CHUNKING ACTIVATED")
-        print(f"   📏 Total: {text_length:,} chars ({text_length/1000:.1f}KB)")
-        print(f"   📦 Chunk: {chunk_size:,} chars ({chunk_size/1000:.1f}KB)")
-        print(f"   🔗 Overlap: {overlap:,} chars")
-        print(f"   {'='*50}")
+        print(f"\n   {'✂️'*25}", file=sys.stderr)
+        import sys; print(f"   ✂️ AUTO-CHUNKING ACTIVATED", file=sys.stderr)
+        import sys; print(f"   📏 Total: {text_length:,} chars ({text_length/1000:.1f}KB, file=sys.stderr)")
+        import sys; print(f"   📦 Chunk: {chunk_size:,} chars ({chunk_size/1000:.1f}KB, file=sys.stderr)")
+        import sys; print(f"   🔗 Overlap: {overlap:,} chars", file=sys.stderr)
+        import sys; print(f"   {'='*50}", file=sys.stderr)
 
         while start < text_length and chunk_num <= max_chunks:
             end = min(start + chunk_size, text_length)
@@ -142,12 +142,12 @@ class CrawlPlugin(MCPPlugin):
             start = next_start
             chunk_num += 1
 
-        print(f"   {'='*50}")
-        print(f"   ✅ Created {len(chunks)} chunks")
+        import sys; print(f"   {'='*50}", file=sys.stderr)
+        import sys; print(f"   ✅ Created {len(chunks)} chunks", file=sys.stderr)
         print(
             f"   📊 Avg size: {sum(c['length'] for c in chunks) // len(chunks):,} chars"
         )
-        print(f"   {'✂️'*25}\n")
+        import sys; print(f"   {'✂️'*25}\n", file=sys.stderr)
 
         return chunks
 
@@ -160,7 +160,7 @@ class CrawlPlugin(MCPPlugin):
         index: int = 0,
     ) -> Dict[str, Any]:
         try:
-            print(f"      [{index}] Fetching: {url[:60]}...")
+            import sys; print(f"      [{index}] Fetching: {url[:60]}...", file=sys.stderr)
 
             result = await self.crawler.fetch_webpage(
                 url=url, max_length=max_length, timeout=timeout
@@ -172,7 +172,7 @@ class CrawlPlugin(MCPPlugin):
                     content_length = len(content)
 
                     if not self.validate_content(content):
-                        print(f"      [{index}] ⚠️ Invalid ({content_length} chars)")
+                        import sys; print(f"      [{index}] ⚠️ Invalid ({content_length} chars, file=sys.stderr)")
                         return {
                             "success": False,
                             "url": url,
@@ -214,7 +214,7 @@ class CrawlPlugin(MCPPlugin):
 
         except Exception as e:
             error_msg = f"{type(e).__name__}: {str(e)}"
-            print(f"      [{index}] ❌ Exception: {error_msg}")
+            import sys; print(f"      [{index}] ❌ Exception: {error_msg}", file=sys.stderr)
             return {"success": False, "url": url, "error": error_msg}
 
     async def fetch_batch(
@@ -232,7 +232,7 @@ class CrawlPlugin(MCPPlugin):
             batch_num = (i // batch_size) + 1
             total_batches = (len(urls) + batch_size - 1) // batch_size
 
-            print(f"   📦 Batch {batch_num}/{total_batches}: {len(batch)} URLs")
+            import sys; print(f"   📦 Batch {batch_num}/{total_batches}: {len(batch)} URLs", file=sys.stderr)
 
             tasks = [
                 self.fetch_single_url(
@@ -285,7 +285,7 @@ class CrawlPlugin(MCPPlugin):
             invalid_urls = [url for url in url_list if not self.validate_url(url)]
 
             if invalid_urls:
-                print(f"   ⚠️ Skipping {len(invalid_urls)} invalid URLs")
+                import sys; print(f"   ⚠️ Skipping {len(invalid_urls)} invalid URLs", file=sys.stderr)
 
             if not valid_urls:
                 return {"success": False, "error": "No valid URLs"}
@@ -298,14 +298,14 @@ class CrawlPlugin(MCPPlugin):
         timeout = max(5, min(120, timeout))
         batch_size = max(1, min(20, batch_size))
 
-        print(f"\n🕷️ fetch_webpage v3.4.1")
-        print(f"   URLs: {len(urls_to_fetch)}")
-        print(f"   Max length: {max_length:,} chars ({max_length/1000:.1f}KB)")
-        print(f"   Backup URLs: {len(backup_urls)}")
+        print(f"\n🕷️ fetch_webpage v3.4.1", file=sys.stderr)
+        import sys; print(f"   URLs: {len(urls_to_fetch)}", file=sys.stderr)
+        import sys; print(f"   Max length: {max_length:,} chars ({max_length/1000:.1f}KB, file=sys.stderr)")
+        import sys; print(f"   Backup URLs: {len(backup_urls)}", file=sys.stderr)
         print(
             f"   🔥 Chunk threshold: {chunk_threshold:,} chars ({chunk_threshold/1000:.0f}KB)"
         )
-        print(f"   Direct call: {is_direct_call}")
+        import sys; print(f"   Direct call: {is_direct_call}", file=sys.stderr)
 
         start_time = time.time()
 
@@ -330,17 +330,17 @@ class CrawlPlugin(MCPPlugin):
             if current_success < target_count:
                 shortage = target_count - current_success
 
-                print(f"\n   {'🔄'*25}")
-                print(f"   🔄 SMART RETRY")
-                print(f"   📊 Current: {current_success}/{target_count}")
-                print(f"   🔁 Need: {shortage} more")
-                print(f"   📦 Backup: {len(backup_urls)}")
-                print(f"   {'='*50}")
+                print(f"\n   {'🔄'*25}", file=sys.stderr)
+                import sys; print(f"   🔄 SMART RETRY", file=sys.stderr)
+                import sys; print(f"   📊 Current: {current_success}/{target_count}", file=sys.stderr)
+                import sys; print(f"   🔁 Need: {shortage} more", file=sys.stderr)
+                import sys; print(f"   📦 Backup: {len(backup_urls)}", file=sys.stderr)
+                import sys; print(f"   {'='*50}", file=sys.stderr)
 
                 # Strategy 1: Backup URLs
                 if backup_urls:
                     retry_urls = backup_urls[: shortage * 2]
-                    print(f"   🚀 Using {len(retry_urls)} backup URLs")
+                    import sys; print(f"   🚀 Using {len(retry_urls)} backup URLs", file=sys.stderr)
 
                     retry_results = await self.fetch_batch(
                         retry_urls, max_length, include_metadata, timeout, batch_size
@@ -352,15 +352,15 @@ class CrawlPlugin(MCPPlugin):
                         ):
                             results.append(r)
                             current_success += 1
-                            print(f"      ✅ Backup: {r['url'][:60]}")
+                            import sys; print(f"      ✅ Backup: {r['url'][:60]}", file=sys.stderr)
                             if current_success >= target_count:
                                 break
 
-                    print(f"   📊 After backup: {current_success}/{target_count}")
+                    import sys; print(f"   📊 After backup: {current_success}/{target_count}", file=sys.stderr)
 
                 # Strategy 2: Retry failed
                 if current_success < target_count:
-                    print(f"\n   🔄 Retrying failed URLs")
+                    print(f"\n   🔄 Retrying failed URLs", file=sys.stderr)
 
                     failed_urls = [r["url"] for r in results if not r.get("success")]
 
@@ -368,7 +368,7 @@ class CrawlPlugin(MCPPlugin):
                         remaining = target_count - current_success
                         retry_urls = failed_urls[: remaining * 2]
 
-                        print(f"   🔁 Retrying {len(retry_urls)} URLs")
+                        import sys; print(f"   🔁 Retrying {len(retry_urls)} URLs", file=sys.stderr)
                         await asyncio.sleep(3)
 
                         retry_results = await self.fetch_batch(
@@ -389,7 +389,7 @@ class CrawlPlugin(MCPPlugin):
                                     ):
                                         results[i] = r
                                         current_success += 1
-                                        print(f"      ✅ Recovered: {r['url'][:60]}")
+                                        import sys; print(f"      ✅ Recovered: {r['url'][:60]}", file=sys.stderr)
                                         break
                                 if current_success >= target_count:
                                     break
@@ -397,11 +397,11 @@ class CrawlPlugin(MCPPlugin):
                 # Final status
                 if current_success < target_count:
                     final_shortage = target_count - current_success
-                    print(f"\n   {'⚠️'*25}")
-                    print(f"   ⚠️ SHORTAGE: {final_shortage} URLs")
-                    print(f"   💡 Need more URLs from search")
-                    print(f"   💡 Increase search limit to {target_count * 3}")
-                    print(f"   {'⚠️'*25}\n")
+                    print(f"\n   {'⚠️'*25}", file=sys.stderr)
+                    import sys; print(f"   ⚠️ SHORTAGE: {final_shortage} URLs", file=sys.stderr)
+                    import sys; print(f"   💡 Need more URLs from search", file=sys.stderr)
+                    import sys; print(f"   💡 Increase search limit to {target_count * 3}", file=sys.stderr)
+                    import sys; print(f"   {'⚠️'*25}\n", file=sys.stderr)
 
                     shortage_info = {
                         "shortage_detected": True,
@@ -432,16 +432,16 @@ class CrawlPlugin(MCPPlugin):
 
         # 🔥 청킹 기준: 30KB (30,000 chars)
         if auto_chunk and total_content_size > chunk_threshold:
-            print(f"\n   {'🔥'*25}")
-            print(f"   🔥 CHUNKING TRIGGERED!")
+            print(f"\n   {'🔥'*25}", file=sys.stderr)
+            import sys; print(f"   🔥 CHUNKING TRIGGERED!", file=sys.stderr)
             print(
                 f"   📊 Total: {total_content_size:,} chars ({total_content_size/1000:.1f}KB)"
             )
             print(
                 f"   📊 Threshold: {chunk_threshold:,} chars ({chunk_threshold/1000:.0f}KB)"
             )
-            print(f"   ✅ Total > Threshold: {total_content_size > chunk_threshold}")
-            print(f"   {'🔥'*25}")
+            import sys; print(f"   ✅ Total > Threshold: {total_content_size > chunk_threshold}", file=sys.stderr)
+            import sys; print(f"   {'🔥'*25}", file=sys.stderr)
 
             combined_content = "\n\n---PAGE SEPARATOR---\n\n".join(
                 [
@@ -468,14 +468,14 @@ class CrawlPlugin(MCPPlugin):
             self._cached_chunks = chunks
         else:
             if total_content_size > 0:
-                print(f"\n   ✅ No chunking needed")
+                print(f"\n   ✅ No chunking needed", file=sys.stderr)
                 print(
                     f"   📊 Total: {total_content_size:,} chars ({total_content_size/1000:.1f}KB)"
                 )
                 print(
                     f"   📊 Threshold: {chunk_threshold:,} chars ({chunk_threshold/1000:.0f}KB)"
                 )
-                print(f"   ✅ Total < Threshold\n")
+                import sys; print(f"   ✅ Total < Threshold\n", file=sys.stderr)
 
         response = {
             "success": True,
