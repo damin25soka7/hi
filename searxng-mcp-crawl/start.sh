@@ -35,9 +35,18 @@ EOF
     echo ""
 fi
 
-# Source the .env file
+# Load .env file safely
 if [ -f ".env" ]; then
-    export $(grep -v '^#' .env | xargs)
+    while IFS='=' read -r key value; do
+        # Skip comments and empty lines
+        if [[ ! "$key" =~ ^#.* ]] && [ -n "$key" ]; then
+            # Remove leading/trailing whitespace and quotes
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            # Export the variable
+            export "$key=$value"
+        fi
+    done < .env
 fi
 
 echo "📋 Configuration:"

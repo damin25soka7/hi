@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 REM SearXNG MCP Server - Simple Startup Script
 REM Double-click this file to start the server!
 
@@ -38,11 +39,14 @@ if not exist ".env" (
     echo.
 )
 
-REM Load environment variables from .env file
+REM Load environment variables from .env file (safe method)
 for /f "usebackq tokens=1,* delims==" %%a in (".env") do (
     set "line=%%a"
+    set "line=!line: =!"
     if not "!line:~0,1!"=="#" (
-        set "%%a=%%b"
+        if not "!line!"=="" (
+            set "%%a=%%b"
+        )
     )
 )
 
@@ -62,3 +66,5 @@ if %ERRORLEVEL% NEQ 0 (
     echo.
     pause
 )
+
+endlocal
