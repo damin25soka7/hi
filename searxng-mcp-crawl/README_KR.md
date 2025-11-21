@@ -16,11 +16,35 @@ OvertliDS/mcp-searxng-enhanced의 향상된 기능이 통합된 SearXNG용 MCP �
 
 ## 🚀 빠른 시작
 
-### 사전 요구사항
-- Python 3.9 이상 (3.11 권장)
-- SearXNG 인스턴스 실행 중 (자체 호스팅 또는 접근 가능한 엔드포인트)
+### ⚡ 초간단 설정 (처음 사용자용)
 
-### 설치 방법
+**단 3단계 - 코딩 지식 불필요!**
+
+1. **Node.js 설치** (한 번만): [nodejs.org](https://nodejs.org)에서 다운로드
+   
+2. **설정 마법사 실행:**
+   - `setup.js` 파일을 더블클릭 (Windows/Mac/Linux)
+   - 또는 실행: `npm run setup`
+   - 간단한 질문에 답하기 (Enter 누르면 기본값 사용)
+   
+3. **서버 시작:**
+   - `start.bat` (Windows) 또는 `start.sh` (Mac/Linux)를 더블클릭
+   - 또는 실행: `npm start`
+
+**끝!** 서버가 `http://127.0.0.1:32769`에서 실행됩니다
+
+👉 **자세한 초보자 가이드는 [시작하기.md](시작하기.md) 참조**
+
+---
+
+### 고급 설정 (개발자용)
+
+#### 사전 요구사항
+- Node.js 14+ (npx용)
+- Python 3.9 이상 (3.11 권장)
+- SearXNG 인스턴스 실행 중
+
+#### 설치 방법
 
 1. **저장소 클론:**
    ```bash
@@ -28,53 +52,51 @@ OvertliDS/mcp-searxng-enhanced의 향상된 기능이 통합된 SearXNG용 MCP �
    cd hi/searxng-mcp-crawl
    ```
 
-2. **가상 환경 생성 (권장):**
+2. **자동 설정:**
    ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # Windows: .venv\Scripts\activate
+   npm run setup
+   ```
+   
+   또는 수동으로 `.env` 파일 생성:
+   ```env
+   SEARXNG_BASE_URL=http://localhost:32768
+   HOST=127.0.0.1
+   PORT=32769
+   DESIRED_TIMEZONE=Asia/Seoul
    ```
 
-3. **의존성 설치:**
+3. **서버 시작:**
    ```bash
-   pip install -r requirements.txt
+   npm start
    ```
 
 ## 📦 사용 방법
 
 ### 방법 1: NPX (권장 - 레거시 HTTP MCP 클라이언트 지원)
 
-**새로운 기능!** npx로 서버를 즉시 실행 - 레거시 HTTP MCP 클라이언트에 완벽합니다:
-
+**간단한 시작:**
 ```bash
-# npx로 직접 실행
-npx @damin25soka7/searxng-mcp-server
-
-# 또는 로컬 디렉토리에서
-cd searxng-mcp-crawl
+npm start
+# 또는
 npx .
 ```
 
-**환경 변수 설정:**
-```bash
-SEARXNG_BASE_URL="http://localhost:32768" DESIRED_TIMEZONE="Asia/Seoul" npx .
-```
+서버가 자동으로:
+- ✅ `.env` 파일에서 설정 로드
+- ✅ Python 설치 확인
+- ✅ 필요시 의존성 설치
+- ✅ SSE 지원 HTTP 서버 시작
 
 **레거시 HTTP MCP 클라이언트 설정:**
 ```json
 {
   "searxng-enhanced": {
-    "url": "http://localhost:32769",
+    "url": "http://127.0.0.1:32769",
     "type": "http",
     "method": "sse"
   }
 }
 ```
-
-npx 스크립트의 장점:
-- ✅ Python 설치 자동 확인
-- ✅ 필요시 의존성 자동 설치
-- ✅ SSE 지원 HTTP 서버 시작
-- ✅ 레거시 MCP 클라이언트와 호환
 
 자세한 npx 사용법은 [NPX_USAGE.md](NPX_USAGE.md)를 참조하세요.
 

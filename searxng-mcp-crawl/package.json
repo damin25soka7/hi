@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node index.js",
+    "setup": "node setup.js",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": [

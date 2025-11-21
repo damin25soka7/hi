@@ -25,11 +25,35 @@ An enhanced Model Context Protocol (MCP) server for SearXNG with advanced featur
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### ⚡ Super Simple Setup (For First-Time Users)
+
+**Just 3 steps - No coding knowledge required!**
+
+1. **Install Node.js** (one-time): Download from [nodejs.org](https://nodejs.org)
+   
+2. **Run Setup Wizard:**
+   - Double-click `setup.js` (Windows/Mac/Linux)
+   - Or run: `npm run setup`
+   - Answer simple questions (or press Enter for defaults)
+   
+3. **Start the Server:**
+   - Double-click `start.bat` (Windows) or `start.sh` (Mac/Linux)
+   - Or run: `npm start`
+
+**That's it!** Server is running at `http://127.0.0.1:32769`
+
+👉 **See [GETTING_STARTED.md](GETTING_STARTED.md) or [시작하기.md](시작하기.md) for detailed beginner guide**
+
+---
+
+### Advanced Setup (For Developers)
+
+#### Prerequisites
+- Node.js 14+ (for npx)
 - Python 3.9 or newer (3.11 recommended)
 - A running SearXNG instance (self-hosted or accessible endpoint)
 
-### Installation
+#### Installation
 
 1. **Clone the repository:**
    ```bash
@@ -37,64 +61,51 @@ An enhanced Model Context Protocol (MCP) server for SearXNG with advanced featur
    cd hi/searxng-mcp-crawl
    ```
 
-2. **Create a virtual environment (recommended):**
+2. **Setup automatically:**
    ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   npm run setup
    ```
-
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure environment variables:**
-   Create a `.env` file:
+   
+   Or manually create `.env` file:
    ```env
    SEARXNG_BASE_URL=http://localhost:32768
-   HOST=0.0.0.0
+   HOST=127.0.0.1
    PORT=32769
-   CONTENT_MAX_LENGTH=10000
-   SEARCH_RESULT_LIMIT=10
-   DESIRED_TIMEZONE=America/New_York
+   DESIRED_TIMEZONE=Asia/Seoul
+   ```
+
+3. **Start the server:**
+   ```bash
+   npm start
    ```
 
 ## 📦 Usage Modes
 
 ### Mode 1: NPX (Recommended - Works with Legacy HTTP MCP Clients)
 
-**NEW!** Run the server instantly with npx - perfect for legacy HTTP MCP clients:
-
+**Simple start:**
 ```bash
-# Run directly with npx
-npx @damin25soka7/searxng-mcp-server
-
-# Or from local directory
-cd searxng-mcp-crawl
+npm start
+# or
 npx .
 ```
 
-**With environment variables:**
-```bash
-SEARXNG_BASE_URL="http://localhost:32768" DESIRED_TIMEZONE="Asia/Seoul" npx .
-```
+The server automatically:
+- ✅ Loads settings from `.env` file
+- ✅ Checks Python installation
+- ✅ Installs dependencies if needed
+- ✅ Starts HTTP server with SSE support
 
 **For legacy HTTP MCP clients, configure:**
 ```json
 {
   "searxng-enhanced": {
-    "url": "http://localhost:32769",
+    "url": "http://127.0.0.1:32769",
     "type": "http",
     "method": "sse"
   }
 }
 ```
-
-The npx script:
-- ✅ Auto-checks Python installation
-- ✅ Auto-installs dependencies if needed
-- ✅ Starts HTTP server with SSE support
-- ✅ Works with legacy MCP clients
 
 See [NPX_USAGE.md](NPX_USAGE.md) for detailed npx usage instructions.
 

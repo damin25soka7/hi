@@ -125,11 +125,28 @@ async function main() {
         console.log('✅ Dependencies are installed');
     }
     
+    // Load .env file if it exists
+    const envPath = path.join(scriptDir, '.env');
+    if (fs.existsSync(envPath)) {
+        console.log('📝 Loading configuration from .env file');
+        const envContent = fs.readFileSync(envPath, 'utf-8');
+        envContent.split('\n').forEach(line => {
+            line = line.trim();
+            if (line && !line.startsWith('#')) {
+                const [key, ...valueParts] = line.split('=');
+                const value = valueParts.join('=').trim();
+                if (key && value) {
+                    process.env[key.trim()] = value;
+                }
+            }
+        });
+    }
+    
     // Get environment variables
     const env = {
         ...process.env,
         SEARXNG_BASE_URL: process.env.SEARXNG_BASE_URL || 'http://localhost:32768',
-        HOST: process.env.HOST || '0.0.0.0',
+        HOST: process.env.HOST || '127.0.0.1',
         PORT: process.env.PORT || '32769',
         CONTENT_MAX_LENGTH: process.env.CONTENT_MAX_LENGTH || '10000',
         SEARCH_RESULT_LIMIT: process.env.SEARCH_RESULT_LIMIT || '10',
