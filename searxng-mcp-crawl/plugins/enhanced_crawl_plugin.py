@@ -2,6 +2,9 @@ from plugin_base import MCPPlugin
 from typing import Dict, Any
 import sys
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Add parent directory to path to import enhanced_crawler
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -33,9 +36,9 @@ class EnhancedCrawlPlugin(MCPPlugin):
                 rate_limit_requests_per_minute=10,
                 rate_limit_timeout_seconds=60
             )
-            print("   🕷️ EnhancedCrawlPlugin: Crawler initialized")
+            logger.info("🕷️ EnhancedCrawlPlugin: Crawler initialized")
         except Exception as e:
-            print(f"   ⚠️ EnhancedCrawlPlugin: Crawler init error: {e}")
+            logger.info(f"⚠️ EnhancedCrawlPlugin: Crawler init error: {e}")
             self.crawler = None
     
     @property
@@ -117,16 +120,13 @@ class EnhancedCrawlPlugin(MCPPlugin):
         # Add https:// if no scheme
         if not url.startswith(("http://", "https://")):
             url = "https://" + url
-            print(f"   ℹ️ Added https:// prefix to URL")
+            logger.info(f"ℹ️ Added https:// prefix to URL")
         
         # Clamp parameters
         max_length = max(100, min(50000, max_length))
         timeout = max(5, min(120, timeout))
         
-        print(f"\n🕷️ Enhanced get_website v4.0.0")
-        print(f"   URL: {url}")
-        print(f"   Max length: {max_length} chars")
-        print(f"   Use cache: {use_cache}")
+        logger.info(f"Enhanced get_website v4.0.0 - URL: {url}, Max length: {max_length}, Use cache: {use_cache}")
         
         try:
             result = await self.crawler.fetch_webpage_enhanced(

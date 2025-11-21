@@ -2,6 +2,9 @@ from plugin_base import MCPPlugin
 from typing import Dict, Any
 import sys
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Add parent directory to path to import enhanced_crawler
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -33,9 +36,9 @@ class EnhancedSearchPlugin(MCPPlugin):
                 rate_limit_requests_per_minute=10,
                 rate_limit_timeout_seconds=60
             )
-            print("   🔍 EnhancedSearchPlugin: Crawler initialized")
+            logger.info("🔍 EnhancedSearchPlugin: Crawler initialized")
         except Exception as e:
-            print(f"   ⚠️ EnhancedSearchPlugin: Crawler init error: {e}")
+            logger.info(f"⚠️ EnhancedSearchPlugin: Crawler init error: {e}")
             self.crawler = None
     
     @property
@@ -133,10 +136,7 @@ class EnhancedSearchPlugin(MCPPlugin):
         # Clamp limit
         limit = max(1, min(60, limit))
         
-        print(f"\n🔍 Enhanced search_web v4.0.0")
-        print(f"   Query: '{query}'")
-        print(f"   Category: {category}")
-        print(f"   Limit: {limit}")
+        logger.info(f"Enhanced search_web v4.0.0 - Query: '{query}', Category: {category}, Limit: {limit}")
         
         try:
             result = await self.crawler.search_with_category(

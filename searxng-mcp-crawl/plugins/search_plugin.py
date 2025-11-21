@@ -22,9 +22,9 @@ class SearchPlugin(MCPPlugin):
     def __init__(self):
         try:
             self.crawler = WebCrawler()
-            print("   🔍 SearchPlugin: Crawler initialized")
+            import sys; print("   🔍 SearchPlugin: Crawler initialized", file=sys.stderr)
         except Exception as e:
-            print(f"   ⚠️ SearchPlugin: Crawler init error: {e}")
+            import sys; print(f"   ⚠️ SearchPlugin: Crawler init error: {e}", file=sys.stderr)
             self.crawler = None
 
     @property
@@ -98,11 +98,11 @@ class SearchPlugin(MCPPlugin):
             else:
                 result_list = []
 
-            print(f"      ✅ Batch {batch_num}: {len(result_list)} results")
+            import sys; print(f"      ✅ Batch {batch_num}: {len(result_list, file=sys.stderr)} results")
             return {"success": True, "results": result_list}
 
         except Exception as e:
-            print(f"      ❌ Batch {batch_num} error: {str(e)[:50]}")
+            import sys; print(f"      ❌ Batch {batch_num} error: {str(e, file=sys.stderr)[:50]}")
             return {"success": False, "results": [], "error": str(e)}
 
     async def search_parallel(
@@ -124,10 +124,10 @@ class SearchPlugin(MCPPlugin):
         batch_size = 10
         num_batches = (limit + batch_size - 1) // batch_size
 
-        print(f"\n   🚀 Parallel Search Mode")
-        print(f"   🎯 Target: {limit} results")
-        print(f"   📦 Batches: {num_batches} × {batch_size} results")
-        print(f"   {'='*50}")
+        print(f"\n   🚀 Parallel Search Mode", file=sys.stderr)
+        import sys; print(f"   🎯 Target: {limit} results", file=sys.stderr)
+        import sys; print(f"   📦 Batches: {num_batches} × {batch_size} results", file=sys.stderr)
+        import sys; print(f"   {'='*50}", file=sys.stderr)
 
         # Create batch tasks
         tasks = []
@@ -167,12 +167,12 @@ class SearchPlugin(MCPPlugin):
             else:
                 failed_batches += 1
 
-        print(f"   {'='*50}")
-        print(f"   ⏱️ Parallel execution: {elapsed:.2f}s")
-        print(f"   ✅ Successful batches: {successful_batches}/{num_batches}")
+        import sys; print(f"   {'='*50}", file=sys.stderr)
+        import sys; print(f"   ⏱️ Parallel execution: {elapsed:.2f}s", file=sys.stderr)
+        import sys; print(f"   ✅ Successful batches: {successful_batches}/{num_batches}", file=sys.stderr)
         if failed_batches > 0:
-            print(f"   ⚠️ Failed batches: {failed_batches}/{num_batches}")
-        print(f"   📊 Total unique results: {len(all_results)}")
+            import sys; print(f"   ⚠️ Failed batches: {failed_batches}/{num_batches}", file=sys.stderr)
+        import sys; print(f"   📊 Total unique results: {len(all_results, file=sys.stderr)}")
 
         return all_results
 
@@ -217,14 +217,14 @@ class SearchPlugin(MCPPlugin):
         # Clamp limit to valid range (now supports up to 60)
         limit = max(1, min(60, limit))
 
-        print(f"\n🔍 search v3.0.1 (High-Performance + CAPTCHA Retry)")
-        print(f"   Query: '{query}'")
-        print(f"   Limit: {limit} results")
-        print(f"   Category: {category}")
+        print(f"\n🔍 search v3.0.1 (High-Performance + CAPTCHA Retry, file=sys.stderr)")
+        import sys; print(f"   Query: '{query}'", file=sys.stderr)
+        import sys; print(f"   Limit: {limit} results", file=sys.stderr)
+        import sys; print(f"   Category: {category}", file=sys.stderr)
         if language != "auto":
-            print(f"   Language: {language}")
+            import sys; print(f"   Language: {language}", file=sys.stderr)
         if time_range:
-            print(f"   Time range: {time_range}")
+            import sys; print(f"   Time range: {time_range}", file=sys.stderr)
 
         import time
 
@@ -238,7 +238,7 @@ class SearchPlugin(MCPPlugin):
                 )
             else:
                 # Single request for small searches
-                print(f"\n   🔍 Single Search Mode")
+                print(f"\n   🔍 Single Search Mode", file=sys.stderr)
 
                 # 🔥 First attempt with original settings
                 results = await self.crawler.search_searxng(
@@ -253,7 +253,7 @@ class SearchPlugin(MCPPlugin):
                 # Check if results were successful
                 if isinstance(results, dict) and results.get("success") is False:
                     error_msg = results.get("error", "Unknown error")
-                    print(f"   ⚠️ First attempt failed: {error_msg}")
+                    import sys; print(f"   ⚠️ First attempt failed: {error_msg}", file=sys.stderr)
 
                     # 🔥 CAPTCHA detected? Try with different language (avoid kr-kr)
                     if "captcha" in error_msg.lower() or "kl" in error_msg.lower():
@@ -276,7 +276,7 @@ class SearchPlugin(MCPPlugin):
                             and results.get("success") is False
                         ):
                             error_msg = results.get("error", "Unknown error")
-                            print(f"   ❌ Retry also failed: {error_msg}")
+                            import sys; print(f"   ❌ Retry also failed: {error_msg}", file=sys.stderr)
 
                             # 🔥 Return structured error with query info
                             return {
@@ -295,7 +295,7 @@ class SearchPlugin(MCPPlugin):
                                 "captcha_blocked": True,
                             }
                         else:
-                            print(f"   ✅ Retry succeeded with en-US!")
+                            import sys; print(f"   ✅ Retry succeeded with en-US!", file=sys.stderr)
                     else:
                         # Non-CAPTCHA error
                         return {
@@ -334,20 +334,20 @@ class SearchPlugin(MCPPlugin):
 
             # 🔥 Zero result warning
             if unique_count == 0:
-                print(f"\n   {'⚠️'*25}")
-                print(f"   ⚠️ ZERO RESULTS WARNING")
-                print(f"   📊 Query: '{query}'")
-                print(f"   💡 No results found - possible CAPTCHA or blocking")
-                print(f"   {'⚠️'*25}\n")
+                print(f"\n   {'⚠️'*25}", file=sys.stderr)
+                import sys; print(f"   ⚠️ ZERO RESULTS WARNING", file=sys.stderr)
+                import sys; print(f"   📊 Query: '{query}'", file=sys.stderr)
+                import sys; print(f"   💡 No results found - possible CAPTCHA or blocking", file=sys.stderr)
+                import sys; print(f"   {'⚠️'*25}\n", file=sys.stderr)
 
-            print(f"\n   {'='*50}")
-            print(f"   {'✅' if unique_count > 0 else '⚠️'} Search Complete!")
-            print(f"   📊 Raw results: {result_count}")
-            print(f"   🎯 Unique results: {unique_count}")
-            print(f"   ⏱️ Total time: {elapsed_time:.2f}s")
+            print(f"\n   {'='*50}", file=sys.stderr)
+            import sys; print(f"   {'✅' if unique_count > 0 else '⚠️'} Search Complete!", file=sys.stderr)
+            import sys; print(f"   📊 Raw results: {result_count}", file=sys.stderr)
+            import sys; print(f"   🎯 Unique results: {unique_count}", file=sys.stderr)
+            import sys; print(f"   ⏱️ Total time: {elapsed_time:.2f}s", file=sys.stderr)
             if unique_count > 0 and elapsed_time > 0:
-                print(f"   🚀 Speed: {unique_count/elapsed_time:.1f} results/sec")
-            print(f"   {'='*50}\n")
+                import sys; print(f"   🚀 Speed: {unique_count/elapsed_time:.1f} results/sec", file=sys.stderr)
+            import sys; print(f"   {'='*50}\n", file=sys.stderr)
 
             return {
                 "success": True,
@@ -377,7 +377,7 @@ class SearchPlugin(MCPPlugin):
 
         except Exception as e:
             error_msg = f"{type(e).__name__}: {str(e)}"
-            print(f"   ❌ Error: {error_msg}")
+            import sys; print(f"   ❌ Error: {error_msg}", file=sys.stderr)
 
             return {
                 "success": False,

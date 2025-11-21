@@ -201,9 +201,9 @@ class EnhancedWebCrawler:
             timeout_seconds=rate_limit_timeout_seconds
         )
         
-        print(f"   🌐 EnhancedWebCrawler initialized: {self.searxng_url}")
-        print(f"   💾 Cache: maxsize={cache_maxsize}, ttl={cache_ttl_minutes}min, max_age={cache_max_age_minutes}min")
-        print(f"   🚦 Rate limit: {rate_limit_requests_per_minute} req/min per domain")
+        logger.info(f"EnhancedWebCrawler initialized: {self.searxng_url}")
+        logger.info(f"Cache: maxsize={cache_maxsize}, ttl={cache_ttl_minutes}min, max_age={cache_max_age_minutes}min")
+        logger.info(f"Rate limit: {rate_limit_requests_per_minute} req/min per domain")
     
     async def search_with_category(
         self,
@@ -237,7 +237,7 @@ class EnhancedWebCrawler:
             if time_range:
                 params["time_range"] = time_range
             
-            print(f"   🔍 Category Search: '{query}' in '{category}'")
+            logger.info(f"🔍 Category Search: '{query}' in '{category}'")
             
             async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
                 response = await client.get(
@@ -250,7 +250,7 @@ class EnhancedWebCrawler:
                 data = response.json()
                 results = data.get("results", [])
                 
-                print(f"   ✅ Got {len(results)} raw results")
+                logger.info(f"✅ Got {len(results)} raw results")
                 
                 # Process results based on category
                 if category.lower() == "images":
@@ -268,7 +268,7 @@ class EnhancedWebCrawler:
                     return await self._process_general_results(results, limit)
         
         except Exception as e:
-            print(f"   ❌ Search error: {str(e)}")
+            logger.info(f"❌ Search error: {str(e)}")
             return {
                 "success": False,
                 "error": str(e),
@@ -386,7 +386,7 @@ class EnhancedWebCrawler:
             
             # Check rate limit
             if not self.rate_limiter.can_request(url):
-                print(f"   ⚠️ Rate limit exceeded for {urlparse(url).netloc}")
+                logger.info(f"⚠️ Rate limit exceeded for {urlparse(url).netloc}")
                 continue
             
             # Try to scrape content
@@ -436,10 +436,10 @@ class EnhancedWebCrawler:
         if use_cache and url in self.website_cache:
             cached = self.website_cache[url]
             if CacheValidator.is_valid(cached, self.cache_max_age_minutes):
-                print(f"   💾 Cache hit: {url[:60]}")
+                logger.info(f"💾 Cache hit: {url[:60]}")
                 return cached
             else:
-                print(f"   🔄 Cache stale: {url[:60]}")
+                logger.info(f"🔄 Cache stale: {url[:60]}")
         
         try:
             # Modify Reddit URLs
@@ -458,7 +458,7 @@ class EnhancedWebCrawler:
                 
                 if kind is not None and kind.mime == "application/pdf":
                     # Process PDF
-                    print(f"   📄 PDF detected: {url[:60]}")
+                    logger.info(f"📄 PDF detected: {url[:60]}")
                     doc = pymupdf.open(stream=raw_content, filetype="pdf")
                     md_text = pymupdf4llm.to_markdown(doc)
                     

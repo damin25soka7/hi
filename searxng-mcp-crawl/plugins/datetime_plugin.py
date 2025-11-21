@@ -3,6 +3,9 @@ from typing import Dict, Any
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class DateTimePlugin(MCPPlugin):
@@ -19,9 +22,9 @@ class DateTimePlugin(MCPPlugin):
         
         try:
             self.timezone = ZoneInfo(self.timezone_str)
-            print(f"   🕐 DateTimePlugin: Timezone set to {self.timezone_str}")
+            logger.info(f"🕐 DateTimePlugin: Timezone set to {self.timezone_str}")
         except Exception as e:
-            print(f"   ⚠️ Invalid timezone '{self.timezone_str}', falling back to UTC: {e}")
+            logger.info(f"⚠️ Invalid timezone '{self.timezone_str}', falling back to UTC: {e}")
             self.timezone = timezone.utc
             self.timezone_str = "UTC"
     

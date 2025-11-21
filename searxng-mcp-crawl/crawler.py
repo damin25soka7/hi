@@ -14,9 +14,9 @@ class WebCrawler:
         self.mock_mode = mock_mode
         
         if self.mock_mode:
-            print(f"   🎭 WebCrawler initialized in MOCK MODE")
+            import sys; print(f"   🎭 WebCrawler initialized in MOCK MODE", file=sys.stderr)
         else:
-            print(f"   🌐 WebCrawler initialized: {self.searxng_url}")
+            import sys; print(f"   🌐 WebCrawler initialized: {self.searxng_url}", file=sys.stderr)
     
     async def search_searxng(
         self, 
@@ -30,7 +30,7 @@ class WebCrawler:
         """Search using SearXNG with multi-page support"""
         
         if self.mock_mode:
-            print(f"   🎭 MOCK: Returning fake results for '{query}'")
+            import sys; print(f"   🎭 MOCK: Returning fake results for '{query}'", file=sys.stderr)
             return self._generate_mock_results(query, limit)
         
         try:
@@ -38,8 +38,8 @@ class WebCrawler:
             page = 1
             max_pages = 10  # 최대 10페이지 (충분히 많이)
             
-            print(f"   🌐 SearXNG: {self.searxng_url}")
-            print(f"      Query: {query}, Target limit: {limit}")
+            import sys; print(f"   🌐 SearXNG: {self.searxng_url}", file=sys.stderr)
+            import sys; print(f"      Query: {query}, Target limit: {limit}", file=sys.stderr)
             
             while len(all_results) < limit and page <= max_pages:
                 params = {
@@ -62,7 +62,7 @@ class WebCrawler:
                             timeout=10.0,
                             follow_redirects=True
                         ) as client:
-                            print(f"      🔄 Page {page}, Attempt {attempt}/3...")
+                            import sys; print(f"      🔄 Page {page}, Attempt {attempt}/3...", file=sys.stderr)
                             
                             response = await client.get(
                                 self.searxng_url,
@@ -70,7 +70,7 @@ class WebCrawler:
                                 headers={"User-Agent": "MCP-Search-Bot/2.0"}
                             )
                             
-                            print(f"      📡 Status: {response.status_code}")
+                            import sys; print(f"      📡 Status: {response.status_code}", file=sys.stderr)
                             
                             response.raise_for_status()
                             data = response.json()
@@ -78,11 +78,11 @@ class WebCrawler:
                             page_results = data.get("results", [])
                             
                             if not page_results:
-                                print(f"      ⚠️ No more results on page {page}")
+                                import sys; print(f"      ⚠️ No more results on page {page}", file=sys.stderr)
                                 return self._format_results(all_results, limit, category)
                             
                             all_results.extend(page_results)
-                            print(f"      ✅ Got {len(page_results)} results (total: {len(all_results)}/{limit})")
+                            import sys; print(f"      ✅ Got {len(page_results, file=sys.stderr)} results (total: {len(all_results)}/{limit})")
                             
                             # 목표 달성
                             if len(all_results) >= limit:
@@ -106,8 +106,8 @@ class WebCrawler:
             return self._format_results(all_results, limit, category)
         
         except Exception as e:
-            print(f"   ⚠️ SearXNG error: {str(e)[:100]}")
-            print(f"   🎭 Falling back to MOCK results")
+            import sys; print(f"   ⚠️ SearXNG error: {str(e, file=sys.stderr)[:100]}")
+            import sys; print(f"   🎭 Falling back to MOCK results", file=sys.stderr)
             return self._generate_mock_results(query, limit)
     
     def _format_results(self, results: List[Dict], limit: int, category: str) -> List[Dict[str, Any]]:
@@ -125,7 +125,7 @@ class WebCrawler:
                 "category": result.get("category", category)
             })
         
-        print(f"      ✅ Final: {len(formatted_results)} results")
+        import sys; print(f"      ✅ Final: {len(formatted_results, file=sys.stderr)} results")
         return formatted_results
     
     def _generate_mock_results(self, query: str, limit: int) -> List[Dict[str, Any]]:
@@ -190,7 +190,7 @@ class WebCrawler:
                     "category": "general"
                 })
         
-        print(f"      🎭 Generated {len(mock_results)} mock results")
+        import sys; print(f"      🎭 Generated {len(mock_results, file=sys.stderr)} mock results")
         return mock_results
     
     async def fetch_webpage(
@@ -202,7 +202,7 @@ class WebCrawler:
         """Fetch and extract content from webpage"""
         
         if self.mock_mode:
-            print(f"   🎭 MOCK: Fetching fake content for {url}")
+            import sys; print(f"   🎭 MOCK: Fetching fake content for {url}", file=sys.stderr)
             return {
                 "success": True,
                 "url": url,
