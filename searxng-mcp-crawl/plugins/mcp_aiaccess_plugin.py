@@ -1,5 +1,5 @@
 from plugin_base import MCPPlugin
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import httpx
 import json
 

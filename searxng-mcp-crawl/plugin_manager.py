@@ -1,8 +1,11 @@
 import importlib.util
 import inspect
+import logging
 from pathlib import Path
 from typing import Dict, Any, List
 from plugin_base import MCPPlugin
+
+logger = logging.getLogger(__name__)
 
 class PluginManager:
     def __init__(self, plugins_dir: str = "plugins"):
@@ -15,7 +18,7 @@ class PluginManager:
         self.plugins.clear()
         
         if not self.plugins_dir.exists():
-            print(f"⚠️ Plugins directory not found: {self.plugins_dir}")
+            logger.warning(f"Plugins directory not found: {self.plugins_dir}")
             return
         
         for plugin_file in self.plugins_dir.glob("*.py"):
@@ -44,16 +47,16 @@ class PluginManager:
                             plugin_instance.set_plugin_manager(self)
                         
                         self.plugins[plugin_name] = plugin_instance
-                        print(f"   ✅ Loaded: {plugin_name} v{plugin_instance.version}")
+                        logger.info(f"Loaded: {plugin_name} v{plugin_instance.version}")
             
             except Exception as e:
-                print(f"   ❌ Failed to load {plugin_file.name}: {e}")
+                logger.error(f"Failed to load {plugin_file.name}: {e}")
         
-        print(f"\n📦 Total plugins loaded: {len(self.plugins)}")
+        logger.info(f"Total plugins loaded: {len(self.plugins)}")
     
     def reload_plugins(self):
         """Reload all plugins"""
-        print("\n🔄 Reloading plugins...")
+        logger.info("Reloading plugins...")
         self.load_plugins()
     
     def list_plugins(self) -> List[Dict[str, Any]]:
