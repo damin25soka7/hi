@@ -1,0 +1,32 @@
+{
+  "name": "@damin25soka7/searxng-mcp-server",
+  "version": "2.0.0",
+  "description": "SearXNG MCP Server with enhanced features - npx compatible",
+  "main": "index.js",
+  "bin": {
+    "searxng-mcp-server": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "mcp",
+    "searxng",
+    "search",
+    "mcp-server",
+    "model-context-protocol"
+  ],
+  "author": "damin25soka7",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/damin25soka7/hi.git",
+    "directory": "searxng-mcp-crawl"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

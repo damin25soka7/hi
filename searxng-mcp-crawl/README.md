@@ -61,7 +61,44 @@ An enhanced Model Context Protocol (MCP) server for SearXNG with advanced featur
 
 ## 📦 Usage Modes
 
-### Mode 1: JSON Block Configuration (Recommended for MCP Clients)
+### Mode 1: NPX (Recommended - Works with Legacy HTTP MCP Clients)
+
+**NEW!** Run the server instantly with npx - perfect for legacy HTTP MCP clients:
+
+```bash
+# Run directly with npx
+npx @damin25soka7/searxng-mcp-server
+
+# Or from local directory
+cd searxng-mcp-crawl
+npx .
+```
+
+**With environment variables:**
+```bash
+SEARXNG_BASE_URL="http://localhost:32768" DESIRED_TIMEZONE="Asia/Seoul" npx .
+```
+
+**For legacy HTTP MCP clients, configure:**
+```json
+{
+  "searxng-enhanced": {
+    "url": "http://localhost:32769",
+    "type": "http",
+    "method": "sse"
+  }
+}
+```
+
+The npx script:
+- ✅ Auto-checks Python installation
+- ✅ Auto-installs dependencies if needed
+- ✅ Starts HTTP server with SSE support
+- ✅ Works with legacy MCP clients
+
+See [NPX_USAGE.md](NPX_USAGE.md) for detailed npx usage instructions.
+
+### Mode 2: JSON Block Configuration (For Modern MCP Clients)
 
 This mode allows you to use the server with MCP clients like Claude Desktop, Cline, etc., without running Docker.
 
@@ -108,12 +145,18 @@ This mode allows you to use the server with MCP clients like Claude Desktop, Cli
 - The server reads from stdin and writes to stdout (JSON-RPC protocol)
 - No separate server process needed - it starts/stops with the client
 
-### Mode 2: HTTP Server Mode (Traditional)
+### Mode 3: HTTP Server Mode (Traditional)
 
 Run as a standalone HTTP server with SSE support:
 
 ```bash
 python server.py
+```
+
+Or using npx (auto-handles dependencies):
+
+```bash
+npx .
 ```
 
 The server will start at `http://localhost:32769` (or configured HOST:PORT).
