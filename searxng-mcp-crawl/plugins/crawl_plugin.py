@@ -143,7 +143,7 @@ class CrawlPlugin(MCPPlugin):
             chunk_num += 1
 
         import sys; print(f"   {'='*50}", file=sys.stderr)
-        import sys; print(f"   ✅ Created {len(chunks, file=sys.stderr)} chunks")
+        import sys; print(f"   ✅ Created {len(chunks)} chunks")
         print(
             f"   📊 Avg size: {sum(c['length'] for c in chunks) // len(chunks):,} chars"
         )
@@ -232,7 +232,7 @@ class CrawlPlugin(MCPPlugin):
             batch_num = (i // batch_size) + 1
             total_batches = (len(urls) + batch_size - 1) // batch_size
 
-            import sys; print(f"   📦 Batch {batch_num}/{total_batches}: {len(batch, file=sys.stderr)} URLs")
+            import sys; print(f"   📦 Batch {batch_num}/{total_batches}: {len(batch)} URLs")
 
             tasks = [
                 self.fetch_single_url(
@@ -285,7 +285,7 @@ class CrawlPlugin(MCPPlugin):
             invalid_urls = [url for url in url_list if not self.validate_url(url)]
 
             if invalid_urls:
-                import sys; print(f"   ⚠️ Skipping {len(invalid_urls, file=sys.stderr)} invalid URLs")
+                import sys; print(f"   ⚠️ Skipping {len(invalid_urls)} invalid URLs")
 
             if not valid_urls:
                 return {"success": False, "error": "No valid URLs"}
@@ -299,9 +299,9 @@ class CrawlPlugin(MCPPlugin):
         batch_size = max(1, min(20, batch_size))
 
         print(f"\n🕷️ fetch_webpage v3.4.1", file=sys.stderr)
-        import sys; print(f"   URLs: {len(urls_to_fetch, file=sys.stderr)}")
+        import sys; print(f"   URLs: {len(urls_to_fetch)}")
         import sys; print(f"   Max length: {max_length:,} chars ({max_length/1000:.1f}KB, file=sys.stderr)")
-        import sys; print(f"   Backup URLs: {len(backup_urls, file=sys.stderr)}")
+        import sys; print(f"   Backup URLs: {len(backup_urls)}")
         print(
             f"   🔥 Chunk threshold: {chunk_threshold:,} chars ({chunk_threshold/1000:.0f}KB)"
         )
@@ -334,13 +334,13 @@ class CrawlPlugin(MCPPlugin):
                 import sys; print(f"   🔄 SMART RETRY", file=sys.stderr)
                 import sys; print(f"   📊 Current: {current_success}/{target_count}", file=sys.stderr)
                 import sys; print(f"   🔁 Need: {shortage} more", file=sys.stderr)
-                import sys; print(f"   📦 Backup: {len(backup_urls, file=sys.stderr)}")
+                import sys; print(f"   📦 Backup: {len(backup_urls)}")
                 import sys; print(f"   {'='*50}", file=sys.stderr)
 
                 # Strategy 1: Backup URLs
                 if backup_urls:
                     retry_urls = backup_urls[: shortage * 2]
-                    import sys; print(f"   🚀 Using {len(retry_urls, file=sys.stderr)} backup URLs")
+                    import sys; print(f"   🚀 Using {len(retry_urls)} backup URLs")
 
                     retry_results = await self.fetch_batch(
                         retry_urls, max_length, include_metadata, timeout, batch_size
@@ -368,7 +368,7 @@ class CrawlPlugin(MCPPlugin):
                         remaining = target_count - current_success
                         retry_urls = failed_urls[: remaining * 2]
 
-                        import sys; print(f"   🔁 Retrying {len(retry_urls, file=sys.stderr)} URLs")
+                        import sys; print(f"   🔁 Retrying {len(retry_urls)} URLs")
                         await asyncio.sleep(3)
 
                         retry_results = await self.fetch_batch(
