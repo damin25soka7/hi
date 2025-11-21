@@ -82,7 +82,7 @@ class WebCrawler:
                                 return self._format_results(all_results, limit, category)
                             
                             all_results.extend(page_results)
-                            import sys; print(f"      ✅ Got {len(page_results)} results (total: {len(all_results)}/{limit})")
+                            import sys; print(f"      ✅ Got {len(page_results)} results (total: {len(all_results)}/{limit})", file=sys.stderr)
                             
                             # 목표 달성
                             if len(all_results) >= limit:
@@ -106,7 +106,7 @@ class WebCrawler:
             return self._format_results(all_results, limit, category)
         
         except Exception as e:
-            import sys; print(f"   ⚠️ SearXNG error: {str(e)[:100]}")
+            import sys; print(f"   ⚠️ SearXNG error: {str(e)[:100]}", file=sys.stderr)
             import sys; print(f"   🎭 Falling back to MOCK results", file=sys.stderr)
             return self._generate_mock_results(query, limit)
     
@@ -125,7 +125,7 @@ class WebCrawler:
                 "category": result.get("category", category)
             })
         
-        import sys; print(f"      ✅ Final: {len(formatted_results)} results")
+        import sys; print(f"      ✅ Final: {len(formatted_results)} results", file=sys.stderr)
         return formatted_results
     
     def _generate_mock_results(self, query: str, limit: int) -> List[Dict[str, Any]]:
@@ -190,7 +190,7 @@ class WebCrawler:
                     "category": "general"
                 })
         
-        import sys; print(f"      🎭 Generated {len(mock_results)} mock results")
+        import sys; print(f"      🎭 Generated {len(mock_results)} mock results", file=sys.stderr)
         return mock_results
     
     async def fetch_webpage(

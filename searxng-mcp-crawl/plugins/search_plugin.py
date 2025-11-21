@@ -98,11 +98,11 @@ class SearchPlugin(MCPPlugin):
             else:
                 result_list = []
 
-            import sys; print(f"      ✅ Batch {batch_num}: {len(result_list)} results")
+            import sys; print(f"      ✅ Batch {batch_num}: {len(result_list)} results", file=sys.stderr)
             return {"success": True, "results": result_list}
 
         except Exception as e:
-            import sys; print(f"      ❌ Batch {batch_num} error: {str(e)[:50]}")
+            import sys; print(f"      ❌ Batch {batch_num} error: {str(e)[:50]}", file=sys.stderr)
             return {"success": False, "results": [], "error": str(e)}
 
     async def search_parallel(
@@ -172,7 +172,7 @@ class SearchPlugin(MCPPlugin):
         import sys; print(f"   ✅ Successful batches: {successful_batches}/{num_batches}", file=sys.stderr)
         if failed_batches > 0:
             import sys; print(f"   ⚠️ Failed batches: {failed_batches}/{num_batches}", file=sys.stderr)
-        import sys; print(f"   📊 Total unique results: {len(all_results)}")
+        import sys; print(f"   📊 Total unique results: {len(all_results)}", file=sys.stderr)
 
         return all_results
 

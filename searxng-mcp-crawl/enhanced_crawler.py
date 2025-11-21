@@ -268,7 +268,7 @@ class EnhancedWebCrawler:
                     return await self._process_general_results(results, limit)
         
         except Exception as e:
-            logger.info(f"❌ Search error: {str(e)}")
+            logger.error(f" Search error: {str(e)}")
             return {
                 "success": False,
                 "error": str(e),
@@ -386,7 +386,7 @@ class EnhancedWebCrawler:
             
             # Check rate limit
             if not self.rate_limiter.can_request(url):
-                logger.info(f"⚠️ Rate limit exceeded for {urlparse(url).netloc}")
+                logger.warning(f" Rate limit exceeded for {urlparse(url).netloc}")
                 continue
             
             # Try to scrape content
