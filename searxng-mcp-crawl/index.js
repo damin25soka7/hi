@@ -4,6 +4,9 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
+// Constants
+const SEPARATOR = '='.repeat(60);
+
 // Get the directory where this script is located
 const scriptDir = __dirname;
 
@@ -40,17 +43,22 @@ function checkDependencies() {
         return false;
     }
     
-    // Check if common dependencies exist
+    // Check if key dependencies exist
     const pythonCmd = checkPython();
     if (!pythonCmd) {
         return false;
     }
     
     try {
-        const result = require('child_process').spawnSync(pythonCmd, ['-c', 'import starlette; import httpx'], {
-            stdio: 'pipe',
-            cwd: scriptDir
-        });
+        // Check for critical dependencies that server.py needs
+        const result = require('child_process').spawnSync(
+            pythonCmd, 
+            ['-c', 'import starlette; import httpx; import uvicorn'], 
+            {
+                stdio: 'pipe',
+                cwd: scriptDir
+            }
+        );
         
         return result.status === 0;
     } catch (e) {
@@ -84,7 +92,7 @@ function installDependencies(pythonCmd) {
 // Main function
 async function main() {
     console.log('🚀 SearXNG MCP Server (Enhanced Edition)');
-    console.log('=' .repeat(60));
+    console.log(SEPARATOR);
     
     // Check Python
     const pythonCmd = checkPython();
@@ -133,7 +141,7 @@ async function main() {
     console.log(`  SearXNG: ${env.SEARXNG_BASE_URL}`);
     console.log(`  Server: http://${env.HOST}:${env.PORT}`);
     console.log(`  Timezone: ${env.DESIRED_TIMEZONE}`);
-    console.log('=' .repeat(60));
+    console.log(SEPARATOR);
     console.log('');
     
     // Start the Python server
